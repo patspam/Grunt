@@ -1,19 +1,39 @@
 <html>
  <head>
-  <title>Grunt</title>
-  <link type="text/css" rel="stylesheet" href="http://yui.yahooapis.com/3.0.0/build/cssfonts/fonts-min.css" />
+  <title>cpanminus Web</title>
+  <style>
+  #stream-wrapper { 
+      border: 1px solid; 
+      padding 5px; 
+      height: 400px; 
+      width: 600px; 
+      overflow: auto;
+      background: black;
+  }
+  #stream { 
+      padding: 5px;
+      color: white;
+      height: 100%;
+      width: 100%;
+  }
+  #m {
+      width: 200px;
+  }
+  </style>
  </head>
  
  <body class="yui-skin-sam">
-  <h2>Grunt Demo</h2>
-  <p>This page uses YUI to automatically call <b>/run/test_streaming</b> which
-  corresponds to the <b>bin/test_streaming.grunt</b> bash script that echoes its
-  arguments and the sleeps a few times to realtime display of a streaming response.
-  </p>
-  <p>Run <i>"curl /run/test_streaming?mxhr=1&amp;args=foo&amp;args=bar"</i> from your command line
-  to see the raw JSON-encoded multiplart XHR response</p>
-  
-  <div><ol id="stream"></ol></div>
+  <h2>cpanminus Web</h2>
+  <div>
+  <form id="install">
+    Distro Name: <input type="text" id="m"> <input type=submit value=Install>
+  </form>
+  </div>
+  <div id="stream-wrapper">
+
+<pre id="stream">Enter the name of a CPAN distribution to install
+</pre>
+  </div>
  
 <script type="text/javascript" src="http://j.shirley.im/yui3/build/yui/yui.js"></script>
 <script type="text/javascript">
@@ -27,27 +47,30 @@ YUI({
         }
     }
 }).use( "json", "node", "base", "gallery-io-stream", function(Y) {
-    var stream_uri = '/run/test_streaming?mxhr=1&args=first&args=second&args=third';
- 
-    var stream = new Y.IOStream({
-        uri: stream_uri,
-    });
+    var base_url = '/run/cpanm?mxhr=1&args=';
  
     var stack = [];
- 
     var output = Y.one('#stream');
  
     Y.on('stream:packet', 
         function(body, headers) {
             try {
                 var data = Y.JSON.parse(body);
-                output.append( "<li>" + data.msg + "</li>"); 
+                output.append( data.msg + "<br/>\n"); 
                 stack.push(data);
             } catch(e) {
             }
         }
     );
-    stream.start();
+    document.getElementById("install").onsubmit = function(){
+        var dist = document.getElementById("m").value;
+        if (dist) {
+            new Y.IOStream({
+                uri: base_url + dist,
+            }).start();
+        }
+        return false;
+    };
  
     window.setTimeout(
         function() { 

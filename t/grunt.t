@@ -10,7 +10,7 @@ use Test::More;
 use HTTP::Request::Common;
 use File::Basename;
 
-my $app = Plack::Util::load_psgi( dirname(__FILE__) . '/../grunt.psgi' );
+my $app = Plack::Util::load_psgi( dirname(__FILE__) . '/../app.psgi' );
 
 test_psgi $app, sub {
     my $cb = shift;

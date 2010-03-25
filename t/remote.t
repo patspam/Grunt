@@ -9,7 +9,7 @@ use File::Basename;
 use Test::Exception;
 use lib 'lib';
 
-my $app = Plack::Util::load_psgi( dirname(__FILE__) . '/../grunt.psgi' );
+my $app = Plack::Util::load_psgi( dirname(__FILE__) . '/../app.psgi' );
 
 use_ok('Grunt::Remote');
 test_tcp(
